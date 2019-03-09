@@ -12,6 +12,7 @@
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
+import http from './utils/http'
 
 import { setStore } from 'wepy-redux'
 import configStore from './store'
@@ -42,20 +43,13 @@ export default class extends wepy.app {
   }
 
   onLaunch() {
-    this.testAsync()
+    this.getPanelsData()
   }
 
-  sleep (s) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve('promise resolved')
-      }, s * 1000)
+  getPanelsData() {
+    http('', res => {
+      console.log(res)
     })
-  }
-
-  async testAsync () {
-    const data = await this.sleep(3)
-    console.log(data)
   }
 
   getUserInfo(cb) {
