@@ -24,7 +24,7 @@ export default function http(data = '', cb, method = 'get', header = {}) {
         'cat|1': cats,
         'title': '@title(3,6)',
         'place': '@county(true)',
-        'date': '@datetime()'
+        'date': '@date(yyyy-MM-dd)'
       }]
     })
     cb(res)

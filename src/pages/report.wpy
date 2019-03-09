@@ -143,7 +143,7 @@
     mixins = []
 
     data = {
-      cats,
+      cats: cats.slice(1, cats.length),
       title: '',
       place: '',
       showPicker: false,
@@ -223,7 +223,6 @@
     events = {}
 
     onLoad() {
-      this.cats.shift()
     }
   }
 </script>
