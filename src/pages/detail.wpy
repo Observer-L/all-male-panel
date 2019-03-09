@@ -1,0 +1,91 @@
+<style lang="less">
+  @import "../styles/base";
+
+  image {
+    width: 100%;
+  }
+
+  .btn-share {
+    right:0;
+    position:absolute;
+    margin:40rpx;
+  }
+
+  .btn-custom {
+    color: @themeColor !important;
+    border-color: @themeColor !important;
+  }
+</style>
+<template>
+  <view>
+    <image src="{{event.img}}"></image>
+
+    <van-cell-group>
+      <van-cell
+        title="{{event.title}}"
+        value="{{event.cat}}"
+        border="{{ false }}"
+      ></van-cell>
+      <van-cell
+        title="{{event.place}}"
+        label="{{event.date}}"
+        border="{{ false }}"
+      ></van-cell>
+    </van-cell-group>
+
+
+    <van-button
+      custom-class="btn-custom"
+      class="btn-share"
+      plain type="default"
+      open-type='share'
+    >share</van-button>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Detail extends wepy.page {
+    config = {
+      navigationBarTitleText: 'Detail',
+      usingComponents: {
+        'van-cell': '../components/vant/cell/index',
+        'van-cell-group': '../components/vant/cell-group/index',
+        'van-transition': '../components/vant/transition/index',
+        'van-button': '../components/vant/button/index'
+      }
+    }
+    components = {}
+
+    mixins = []
+
+    data = {
+      event: {}
+    }
+
+    computed = {}
+
+    methods = {
+    }
+
+    events = {}
+
+    onLoad(options) {
+      for (const i of this.$parent.globalData.panels) {
+        if (i.id == options.id) {
+          this.event = i
+          break
+        }
+      }
+    }
+
+    onShareAppMessage() {
+      return {
+        title: 'another all male panel...',
+        path: '/pages/detail?id=' + this.event.id
+      }
+    }
+  }
+</script>

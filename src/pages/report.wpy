@@ -87,7 +87,7 @@
       class="btn-submit"
       plain type="default"
       @click="submit"
-    >公开处刑</van-button>
+    >execute</van-button>
 
     <van-popup
       show="{{ showPicker }}"
