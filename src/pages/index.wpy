@@ -53,7 +53,7 @@
         status="{{item.date}}"
       >
         <view>
-          <view>{{item.cat}}</view>
+          <!--<view>{{item.cat}}</view>-->
           <image src="{{item.img}}" class="panel-img"></image>
         </view>
       </van-panel>
@@ -62,7 +62,7 @@
     </view>
 
     <view class="FAB">
-      <van-icon name="add-o"></van-icon>
+      <van-icon name="add-o" @tap="report"></van-icon>
     </view>
   </view>
 </template>
@@ -98,6 +98,11 @@
     methods = {
       changeTab(e) {
         this.active = e.detail.index
+      },
+      report() {
+        wx.navigateTo({
+          url: '/pages/report'
+        })
       }
     }
 

@@ -1,0 +1,229 @@
+<style lang="less">
+  @import "../styles/base";
+
+  .pic-wrapper {
+    display:flex;
+    align-items:center;
+    margin: 32rpx;
+    font-size: 14px;
+    color: #333;
+    label {
+      margin-right: 40rpx;
+    }
+    .add, .pic {
+      width: 140rpx;
+      height: 140rpx;
+    }
+    .add {
+      text-align: center;
+      background: #eee;
+      color: #aaa;
+      font-size: 28px;
+      line-height: 126rpx;
+    }
+  }
+
+  .btn-submit {
+    right:0;
+    position:absolute;
+    margin:40rpx;
+  }
+
+  .btn-custom {
+    color: @themeColor !important;
+    border-color: @themeColor !important;
+  }
+
+</style>
+<template>
+  <view class="page">
+    <van-cell-group>
+      <van-field
+        value="{{ title }}"
+        label="Title"
+        placeholder="title"
+        @input="inputTitle"
+        @click-icon="onClickIcon"
+        border="{{ false }}"
+      ></van-field>
+
+      <van-field
+        value="{{ place }}"
+        @input="inputPlace"
+        label="Place"
+        placeholder="place"
+        border="{{ false }}"
+      ></van-field>
+
+      <van-cell
+        title="Cat"
+        value="{{selectedCat}}"
+        @tap="togglePicker"
+        is-link
+        border="{{ false }}"
+        arrow-direction="{{showPicker ? 'up' : 'down'}}"
+      ></van-cell>
+
+
+      <van-cell
+        title="Time"
+        value="{{selectedTime}}"
+        @tap="toggleDatetimePicker"
+        is-link
+        border="{{ false }}"
+        arrow-direction="{{showDatetimePicker ? 'up' : 'down'}}"
+      ></van-cell>
+
+      <view class="pic-wrapper">
+        <label>Picture</label>
+        <view class="add" wx:if="{{!pic}}" @tap="addPic">+</view>
+        <image class="pic" wx:else src="{{pic}}"></image>
+      </view>
+
+    </van-cell-group>
+
+    <van-button
+      custom-class="btn-custom"
+      class="btn-submit"
+      plain type="default"
+      @click="submit"
+    >公开处刑</van-button>
+
+    <van-popup
+      show="{{ showPicker }}"
+      @close="togglePicker"
+      position="bottom"
+    >
+      <van-picker
+        columns="{{ cats }}"
+        @change="selectCat"
+      ></van-picker>
+    </van-popup>
+
+    <van-popup
+      show="{{ showDatetimePicker }}"
+      @close="toggleDatetimePicker"
+      position="bottom"
+    >
+      <van-datetime-picker
+        type="date"
+        show-toolbar="{{false}}"
+        value="{{ currentDate }}"
+        min-date="{{ minDate }}"
+        max-date="{{ maxDate }}"
+        @input="selectTime"></van-datetime-picker>
+    </van-popup>
+
+    <van-toast id="van-toast"></van-toast>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { cats } from '../config'
+  import Toast from '../components/vant/toast/toast'
+
+  export default class Report extends wepy.page {
+    config = {
+      navigationBarTitleText: 'Report',
+      usingComponents: {
+        'van-field': '../components/vant/field/index',
+        'van-picker': '../components/vant/picker/index',
+        'van-cell-group': '../components/vant/cell-group/index',
+        'van-transition': '../components/vant/transition/index',
+        'van-popup': '../components/vant/popup/index',
+        'van-cell': '../components/vant/cell/index',
+        'van-button': '../components/vant/button/index',
+        'van-toast': '../components/vant/toast/index',
+        'van-datetime-picker': '../components/vant/datetime-picker/index'
+      }
+    }
+    components = {}
+
+    mixins = []
+
+    data = {
+      cats,
+      title: '',
+      place: '',
+      showPicker: false,
+      showDatetimePicker: false,
+      selectedCat: '',
+      selectedTime: '',
+      pic: '',
+      minHour: 10,
+      maxHour: 20,
+      minDate: new Date().getTime(),
+      maxDate: new Date(2019, 10, 1).getTime(),
+      currentDate: new Date().getTime()
+    }
+
+    computed = {}
+
+    methods = {
+      togglePicker() {
+        this.showPicker = !this.showPicker
+        if (!this.selectedCat) {
+          this.selectedCat = cats[0]
+        }
+      },
+      toggleDatetimePicker() {
+        this.showDatetimePicker = !this.showDatetimePicker
+        if (!this.selectedTime) {
+          this.selectedTime = this.currentDate
+        }
+      },
+      selectCat(e) {
+        this.selectedCat = e.detail.value
+      },
+      selectTime(e) {
+        this.selectedTime = e.detail
+      },
+      inputPlace(e) {
+        this.place = e.detail
+      },
+      inputTitle(e) {
+        this.title = e.detail
+      },
+      addPic() {
+        const self = this
+        wx.chooseImage({
+          count: 1,
+          sizeType: ['original', 'compressed'],
+          sourceType: ['album', 'camera'],
+          success(res) {
+            // tempFilePath可以作为img标签的src属性显示图片
+            const tempFilePaths = res.tempFilePaths
+            self.pic = tempFilePaths[0]
+            self.$apply()
+          }
+        })
+      },
+      submit() {
+        const isValid = this.title && this.place && this.selectedCat && this.selectedTime && this.pic
+        if (isValid) {
+          Toast.success({
+            message: '发布成功',
+            duration: 1500
+          })
+          setTimeout(() => {
+            wx.reLaunch({
+              url: '/pages/index'
+            })
+          }, 1600)
+        } else {
+          Toast.fail({
+            message: '请填写完表单',
+            duration: 1500
+          })
+        }
+      }
+    }
+
+    events = {}
+
+    onLoad() {
+      this.cats.shift()
+    }
+  }
+</script>
