@@ -1,12 +1,4 @@
 <style lang="less">
-.container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-}
 </style>
 
 <script>
@@ -34,7 +26,8 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    userInfo: null
+    userInfo: null,
+    panels: []
   }
 
   constructor () {
@@ -47,9 +40,30 @@ export default class extends wepy.app {
   }
 
   getPanelsData() {
-    http('', res => {
-      console.log(res)
+    return new Promise((resolve, reject) => {
+      return http('', res => {
+        console.log(res)
+        if (!res.error_code) {
+          const data = res.panels
+          resolve(data)
+        } else {
+          reject(res.error_msg)
+        }
+      })
     })
+  }
+
+  clearPanelsData(data) {
+    const cleanData = {}
+    for (const i of data) {
+      if (!cleanData[i.cat]) {
+        cleanData[i.cat] = []
+        cleanData[i.cat].push(i)
+      } else {
+        cleanData[i.cat].push(i)
+      }
+    }
+    return cleanData
   }
 
   getUserInfo(cb) {
