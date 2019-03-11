@@ -104,7 +104,7 @@
 
       <van-cell
         title="Time"
-        value="{{selectedTime}}"
+        value="{{time}}"
         @tap="toggleDatetimePicker"
         is-link
         border="{{ false }}"
@@ -180,6 +180,7 @@
   import wepy from 'wepy'
   import { cats } from '../config'
   import Toast from '../components/vant/toast/toast'
+  import { format2FullTime } from '../utils/moment'
 
   export default class Report extends wepy.page {
     config = {
@@ -211,15 +212,13 @@
       showBroad: false,
       selectedCat: '',
       selectedTime: '',
+      time: '',
       selectedBadge: 0,
       pic: '',
-      minHour: 10,
-      maxHour: 20,
-      minDate: new Date().getTime(),
-      maxDate: new Date(2019, 10, 1).getTime(),
+      minDate: new Date(2018, 1, 1).getTime(),
+      maxDate: new Date().getTime(),
       currentDate: new Date().getTime(),
-      loading: false,
-      tempFilePath: null
+      loading: false
     }
 
     methods = {
@@ -233,6 +232,7 @@
         this.showDatetimePicker = !this.showDatetimePicker
         if (!this.selectedTime) {
           this.selectedTime = this.currentDate
+          this.time = format2FullTime(this.currentDate)
         }
       },
       toggleBroad() {
@@ -243,6 +243,7 @@
       },
       selectTime(e) {
         this.selectedTime = e.detail
+        this.time = format2FullTime(e.detail)
       },
       inputPlace(e) {
         this.place = e.detail

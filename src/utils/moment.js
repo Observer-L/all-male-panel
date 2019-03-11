@@ -5,7 +5,7 @@ import moment from 'moment'
 
 
 export function format2FullTime(time) {
-  const format = 'YYYY-M-D a h:mm'
+  const format = 'YYYY-M-D'
   return moment(time).format(format)
 }
 
