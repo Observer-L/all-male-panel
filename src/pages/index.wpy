@@ -72,6 +72,7 @@
 <script>
   import wepy from 'wepy'
   import { cats } from '../config'
+  import { format2FullTime } from '../utils/moment'
 
   export default class Index extends wepy.page {
     config = {
@@ -118,6 +119,9 @@
     onLoad() {
       const self = this
       this.$parent.getPanelsData().then(res => {
+        for (const i of res) {
+          i.date = format2FullTime(i.date)
+        }
         self.panels = res
         self.$parent.globalData.panels = res
         self.cleanPanels = self.$parent.clearPanelsData(res)
