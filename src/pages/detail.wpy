@@ -15,6 +15,32 @@
     color: @themeColor !important;
     border-color: @themeColor !important;
   }
+
+  .reaction-wrapper {
+    display: flex;
+    margin: 20rpx;
+    align-items: center;
+    height: 126rpx;
+    .reaction {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 20rpx;
+      &.selected {
+        .emoji {
+          font-size: 36px;
+        }
+      }
+      .emoji {
+        font-size: 20px;
+        transition: font-size .3s ease;
+      }
+      .count {
+        font-size: 9px;
+        color: #aaa;
+      }
+    }
+  }
 </style>
 <template>
   <view>
@@ -32,6 +58,33 @@
         border="{{ false }}"
       ></van-cell>
     </van-cell-group>
+
+    <view class="reaction-wrapper">
+      <view class="reaction fine {{reaction === 'fine' ? 'selected' : ''}}" id="fine" @tap="react">
+        <i class="emoji">😂</i>
+        <text class="count">
+          {{event.reaction.fine - event.reaction_dec.fine ? event.reaction.fine - event.reaction_dec.fine : ''}}
+        </text>
+      </view>
+      <view class="reaction disgusting {{reaction === 'disgusting' ? 'selected' : ''}}" id="disgusting" @tap="react">
+        <i class="emoji">😩</i>
+        <text class="count">
+          {{event.reaction.disgusting - event.reaction_dec.disgusting ? event.reaction.disgusting - event.reaction_dec.disgusting : ''}}
+        </text>
+      </view>
+      <view class="reaction shock {{reaction === 'shock' ? 'selected' : ''}}" id="shock" @tap="react">
+        <i class="emoji">😱</i>
+        <text class="count">
+          {{event.reaction.shock - event.reaction_dec.shock ? event.reaction.shock - event.reaction_dec.shock : ''}}
+        </text>
+      </view>
+      <view class="reaction angry {{reaction === 'angry' ? 'selected' : ''}}" id="angry" @tap="react">
+        <i class="emoji">😠</i>
+        <text class="count">
+          {{event.reaction.angry - event.reaction_dec.angry ? event.reaction.angry - event.reaction_dec.angry : ''}}
+        </text>
+      </view>
+    </view>
 
 
     <van-button
@@ -59,26 +112,86 @@
     }
     components = {}
 
-    mixins = []
-
     data = {
-      event: {}
+      event: {},
+      reaction: '',
+      reacted: false
     }
-
-    computed = {}
 
     methods = {
+      react(e) {
+        const self = this
+        const reaction = e.currentTarget.id
+        if (this.reaction === reaction) {
+          if (this.event.reaction[reaction] === 0) return
+          // 重复点则取消
+          wx.cloud.callFunction({
+            name: 'cancelReaction',
+            data: {
+              pid: this.event._id,
+              reaction: this.reaction
+            },
+            success(res) {
+              self.event.reaction_dec[self.reaction] += 1
+              self.reaction = ''
+              self.$apply()
+            }
+          })
+        } else {
+          this.reaction = reaction
+          wx.cloud.callFunction({
+            name: 'updateReaction',
+            data: {
+              pid: this.event._id,
+              reaction: this.reaction
+            },
+            success(res) {
+              self.event.reaction[self.reaction] += 1
+              self.$apply()
+            }
+          })
+          wx.cloud.callFunction({
+            name: 'setUserReaction',
+            data: {
+              pid: this.event._id,
+              reaction: this.reaction
+            }
+          })
+        }
+      }
     }
 
-    events = {}
-
     onLoad(options) {
+      const self = this
       for (const i of this.$parent.globalData.panels) {
         if (i._id === options.id) {
           this.event = i
           break
         }
       }
+
+      wx.cloud.callFunction({
+        name: 'queryUserReaction',
+        data: {
+          pid: this.event._id
+        },
+        success(res) {
+          res = res.result.data[0]
+          if (res) {
+            if (res.reaction) {
+              self.reaction = res.reaction
+              self.reacted = true
+              self.$apply()
+              return
+            } else {
+              console.log('no reaction but exist record')
+            }
+          } else {
+            console.log('no reaction')
+          }
+          this.reacted = false
+        }
+      })
     }
 
     onShareAppMessage() {
