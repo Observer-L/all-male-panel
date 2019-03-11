@@ -8,6 +8,7 @@ import http from './utils/http'
 
 import { setStore } from 'wepy-redux'
 import configStore from './store'
+import {DEBUG} from './config'
 
 const store = configStore()
 setStore(store)
@@ -15,8 +16,8 @@ setStore(store)
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/index',
       'pages/report',
+      'pages/index',
       'pages/detail'
     ],
     window: {
@@ -38,20 +39,32 @@ export default class extends wepy.app {
   }
 
   onLaunch() {
+    wx.cloud.init({
+      env: 'sdg-e5c142',
+      traceUser: true
+    })
     this.getPanelsData()
   }
 
   getPanelsData() {
     return new Promise((resolve, reject) => {
-      return http('', res => {
-        console.log(res)
-        if (!res.error_code) {
-          const data = res.panels
-          resolve(data)
-        } else {
-          reject(res.error_msg)
-        }
-      })
+      if (!DEBUG) {
+        wx.cloud.callFunction({
+          name: 'getPanelsData',
+          success(res) {
+            resolve(res.result.data)
+          }
+        })
+      } else {
+        return http('', res => {
+          if (!res.error_code) {
+            const data = res.panels
+            resolve(data)
+          } else {
+            reject(res.error_msg)
+          }
+        })
+      }
     })
   }
 

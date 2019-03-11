@@ -9,8 +9,10 @@
 		"autoAudits": false
 	},
 	"compileType": "miniprogram",
-	"appid": "touristappid",
+	"appid": "wx0c557a4424ce4f22",
 	"projectname": "amp",
 	"miniprogramRoot": "dist/",
+	"cloudfunctionRoot": "cloudfunction/",
+	"libVersion": "2.6.2",
 	"condition": {}
 }

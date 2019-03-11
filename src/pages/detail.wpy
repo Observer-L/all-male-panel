@@ -74,7 +74,7 @@
 
     onLoad(options) {
       for (const i of this.$parent.globalData.panels) {
-        if (i.id == options.id) {
+        if (i._id === options.id) {
           this.event = i
           break
         }
@@ -83,8 +83,8 @@
 
     onShareAppMessage() {
       return {
-        title: 'another all male panel...',
-        path: '/pages/detail?id=' + this.event.id
+        title: 'Congrats, you have an all male panel!',
+        path: '/pages/detail?id=' + this.event._id
       }
     }
   }

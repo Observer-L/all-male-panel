@@ -19,7 +19,7 @@ export default function http(data = '', cb, method = 'get', header = {}) {
       'error_code': '',
       'error_msg': '',
       'panels|1-10': [{
-        'id|+1': 1,
+        '_id|+1': 1,
         'img': Random.image('200x400'),
         'cat|1': cats,
         'title': '@title(3,6)',
