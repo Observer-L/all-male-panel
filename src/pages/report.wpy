@@ -124,6 +124,7 @@
       class="btn-submit"
       plain type="default"
       @click="submit"
+      loading="{{loading}}"
     >execute</van-button>
 
     <van-popup
@@ -171,7 +172,7 @@
         @input="selectTime"></van-datetime-picker>
     </van-popup>
 
-    <van-toast id="van-toast" loading="{{loading}}" ></van-toast>
+    <van-toast id="van-toast"></van-toast>
   </view>
 </template>
 
