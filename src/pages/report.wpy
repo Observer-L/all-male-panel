@@ -70,6 +70,16 @@
       }
     }
   }
+  .board {
+    overflow-y: visible !important;
+  }
+
+  .btn-reset {
+    position: absolute;
+    top: -80rpx;
+    right: 10rpx;
+    color: #eee;
+  }
 
 </style>
 <template>
@@ -115,7 +125,11 @@
       <view class="pic-wrapper">
         <label>Picture</label>
         <view class="add" wx:if="{{!pic}}" @tap="addPic">+</view>
-        <image class="pic" wx:else src="{{pic}}"></image>
+        <image
+          class="pic"
+          wx:else src="{{pic}}"
+          @tap="toggleBroad"
+        ></image>
       </view>
 
     </van-cell-group>
@@ -129,6 +143,7 @@
     >execute</van-button>
 
     <van-popup
+      custom-class="board"
       show="{{ showBroad }}"
       @close="toggleBroad"
     >
@@ -145,6 +160,9 @@
           @tap="selectBadge"
           id="{{index}}"
         ></image>
+      </view>
+      <view>
+        <van-icon name="replay" class="btn-reset" @tap="addPic"></van-icon>
       </view>
     </van-popup>
 
@@ -195,6 +213,7 @@
         'van-cell': '../components/vant/cell/index',
         'van-button': '../components/vant/button/index',
         'van-toast': '../components/vant/toast/index',
+        'van-icon': '../components/vant/icon/index',
         'van-datetime-picker': '../components/vant/datetime-picker/index'
       }
     }
