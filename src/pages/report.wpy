@@ -80,7 +80,6 @@
         label="Title"
         placeholder="title"
         @input="inputTitle"
-        @click-icon="onClickIcon"
         border="{{ false }}"
       ></van-field>
 
@@ -88,6 +87,8 @@
         value="{{ place }}"
         @input="inputPlace"
         label="Place"
+        icon="location-o"
+        bind:click-icon="location"
         placeholder="place"
         border="{{ false }}"
       ></van-field>
@@ -247,6 +248,15 @@
       },
       inputPlace(e) {
         this.place = e.detail
+      },
+      location() {
+        const self = this
+        wx.chooseLocation({
+          success(res) {
+            self.place = res.address
+            self.$apply()
+          }
+        })
       },
       inputTitle(e) {
         this.title = e.detail
