@@ -238,7 +238,8 @@
       minDate: new Date(2018, 1, 1).getTime(),
       maxDate: new Date().getTime(),
       currentDate: new Date().getTime(),
-      loading: false
+      loading: false,
+      reactions: {}
     }
 
     methods = {
@@ -320,8 +321,8 @@
                   cat: self.selectedCat,
                   date: self.selectedTime,
                   img: self.pic,
-                  reaction: reactions,
-                  reaction_dec: reactions
+                  reaction: self.reactions,
+                  reaction_dec: self.reactions
                 }
               }).then(() => {
                 self.loading = false
@@ -348,6 +349,10 @@
     }
 
     onLoad() {
+      console.log(reactions)
+      for (const i of Object.keys(reactions)) {
+        this.reactions[i] = 0
+      }
     }
 
     drawCanvas() {

@@ -1,10 +1,13 @@
 let DEBUG = false
 const cats = ['All', 'Business', 'Academia', 'Government', 'Civic Society']
 const host = 'https://xxx.com'
+
+// emoji cheat sheet https://www.webfx.com/tools/emoji-cheat-sheet/
 const reactions = {
-  angry: 0,
-  disgusting: 0,
-  fine: 0,
-  shock: 0
+  angry: '😠',
+  disgusting: '😩',
+  fine: '😂',
+  shock: '😱'
 }
+
 export { DEBUG, cats, host, reactions }
