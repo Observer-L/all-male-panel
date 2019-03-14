@@ -86,13 +86,14 @@
       </view>
     </view>
 
-
     <van-button
       custom-class="btn-custom"
       class="btn-share"
       plain type="default"
       open-type='share'
-    >share</van-button>
+    >
+      share
+    </van-button>
 
   </view>
 </template>
@@ -110,7 +111,6 @@
         'van-button': '../components/vant/button/index'
       }
     }
-    components = {}
 
     data = {
       event: {},
@@ -122,6 +122,7 @@
       react(e) {
         const self = this
         const reaction = e.currentTarget.id
+        const preReaction = this.reaction
         if (this.reaction === reaction) {
           if (this.event.reaction[reaction] === 0) return
           // 重复点则取消
@@ -138,22 +139,35 @@
             }
           })
         } else {
-          this.reaction = reaction
-          // 更新论坛反应信息
-          wx.cloud.callFunction({
-            name: 'updateReaction',
-            data: {
-              pid: this.event._id,
-              reaction: this.reaction
-            },
-            success(res) {
-              self.event.reaction[self.reaction] += 1
-              self.$apply()
-            }
-          })
+          if (preReaction) {
+            wx.cloud.callFunction({
+              name: 'cancelReaction',
+              data: {
+                pid: this.event._id,
+                reaction: preReaction
+              },
+              success(res) {
+                self.event.reaction_dec[self.reaction] += 1
+                // 设置用户反应
+                self.reacted ? self.setUserReaction(reaction, false) : self.setUserReaction(reaction)
+                self.reaction = reaction
+                self.$apply()
 
-          // 设置用户反应
-          this.reacted ? this.setUserReaction(false) : this.setUserReaction()
+                // 更新论坛反应信息
+                wx.cloud.callFunction({
+                  name: 'updateReaction',
+                  data: {
+                    pid: self.event._id,
+                    reaction: self.reaction
+                  },
+                  success(res) {
+                    self.event.reaction[self.reaction] += 1
+                    self.$apply()
+                  }
+                })
+              }
+            })
+          }
         }
       }
     }
@@ -202,13 +216,13 @@
     }
 
     // 设置用户对论坛的反应
-    setUserReaction(init = true) {
+    setUserReaction(reaction, init = true) {
       wx.cloud.callFunction({
         name: 'setUserReaction',
         data: {
           init: init,
           pid: this.event._id,
-          reaction: this.reaction
+          reaction
         }
       })
     }
