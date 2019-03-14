@@ -139,6 +139,7 @@
           })
         } else {
           this.reaction = reaction
+          // 更新论坛反应信息
           wx.cloud.callFunction({
             name: 'updateReaction',
             data: {
@@ -150,13 +151,9 @@
               self.$apply()
             }
           })
-          wx.cloud.callFunction({
-            name: 'setUserReaction',
-            data: {
-              pid: this.event._id,
-              reaction: this.reaction
-            }
-          })
+
+          // 设置用户反应
+          this.reacted ? this.setUserReaction(false) : this.setUserReaction()
         }
       }
     }
@@ -170,6 +167,7 @@
         }
       }
 
+      // 查询用户是否已反应该论坛
       wx.cloud.callFunction({
         name: 'queryUserReaction',
         data: {
@@ -178,9 +176,10 @@
         success(res) {
           res = res.result.data[0]
           if (res) {
+            self.reacted = true
+            self.$apply()
             if (res.reaction) {
               self.reaction = res.reaction
-              self.reacted = true
               self.$apply()
               return
             } else {
@@ -194,11 +193,24 @@
       })
     }
 
+    // 分享信息
     onShareAppMessage() {
       return {
         title: 'Congrats, you have an all male panel!',
         path: '/pages/detail?id=' + this.event._id
       }
+    }
+
+    // 设置用户对论坛的反应
+    setUserReaction(init = true) {
+      wx.cloud.callFunction({
+        name: 'setUserReaction',
+        data: {
+          init: init,
+          pid: this.event._id,
+          reaction: this.reaction
+        }
+      })
     }
   }
 </script>

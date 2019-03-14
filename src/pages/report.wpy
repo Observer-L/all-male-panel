@@ -197,7 +197,7 @@
 
 <script>
   import wepy from 'wepy'
-  import { cats } from '../config'
+  import { cats, reactions } from '../config'
   import Toast from '../components/vant/toast/toast'
   import { format2FullTime } from '../utils/moment'
 
@@ -319,7 +319,9 @@
                   place: self.place,
                   cat: self.selectedCat,
                   date: self.selectedTime,
-                  img: self.pic
+                  img: self.pic,
+                  reaction: reactions,
+                  reaction_dec: reactions
                 }
               }).then(() => {
                 self.loading = false
