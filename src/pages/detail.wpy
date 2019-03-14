@@ -44,7 +44,7 @@
 </style>
 <template>
   <view>
-    <image src="{{event.img}}"></image>
+    <image src="{{event.img}}" @tap="previewImage"></image>
 
     <van-cell-group>
       <van-cell
@@ -158,6 +158,12 @@
             }
           })
         }
+      },
+      previewImage() {
+        wx.previewImage({
+          current: this.event.img, // 当前显示图片的http链接
+          urls: [this.event.img] // 需要预览的图片http链接列表
+        })
       }
     }
 
